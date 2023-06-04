@@ -1,0 +1,31 @@
+{
+  "moduleFileExtensions": [
+    "js",
+    "json",
+    "ts"
+  ],
+  "rootDir": ".",
+  "testEnvironment": "node",
+  "testRegex": ".e2e-spec.ts$",
+  "transform": {
+    "^.+\\.(t|j)s$": "ts-jest"
+  },
+  "moduleNameMapper": {
+    "@nestboot/nest-boot/(.*)": "<rootDir>/../libs/nest-boot/src/$1",
+    "@nestboot/nest-boot": "<rootDir>/../libs/nest-boot/src",
+    "@nestprisma/nest-prisma/(.*)": "<rootDir>/../libs/nest-prisma/src/$1",
+    "@nestprisma/nest-prisma": "<rootDir>/../libs/nest-prisma/src",
+    "@nestboot/common/(.*)": "<rootDir>/../libs/common/src/$1",
+    "@nestboot/common": "<rootDir>/../libs/common/src",
+    "@nestboot/logger/(.*)": "<rootDir>/../libs/logger/src/$1",
+    "@nestboot/logger": "<rootDir>/../libs/logger/src",
+    "@nestboot/crypto/(.*)": "<rootDir>/../libs/crypto/src/$1",
+    "@nestboot/crypto": "<rootDir>/../libs/crypto/src",
+    "@nestboot/config/(.*)": "<rootDir>/../libs/config/src/$1",
+    "@nestboot/config": "<rootDir>/../libs/config/src",
+    "@nestboot/prisma/(.*)": "<rootDir>/../libs/prisma/src/$1",
+    "@nestboot/prisma": "<rootDir>/../libs/prisma/src",
+    "@nestboot/core/(.*)": "<rootDir>/../libs/core/src/$1",
+    "@nestboot/core": "<rootDir>/../libs/core/src"
+  }
+}

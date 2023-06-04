@@ -1,0 +1,94 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 枚举所有的状态
+enum Status {
+  INIT
+  PUSH_AGENT
+  PUSH_AGENT_FAILED
+  PUSH_AGENT_DONE
+  DOWNLOAD_AGENT
+  DOWNLOAD_FAILED
+  INSTALL
+  STARTING
+  STOPPING
+  STOPPED
+  UPDATING
+  SUCCESS
+  FAILED
+  RUNNING
+  UNINSTALL
+  CLEANING
+}
+
+model Agent {
+  id            String   @id @default(cuid())
+  ip            String   @unique
+  name          String
+  ssh_usr       String
+  ssh_password  String
+  status        Status
+  home_path     String
+  client_id     String
+  client_secret String
+  platform_ip   String
+  created_at    DateTime @default(now())
+  updated_at    DateTime @default(now())
+  apps          App[]
+  task          Task?    @relation(fields: [task_id], references: [id])
+  task_id       String
+
+  @@map("t_punk_agent")
+}
+
+model App {
+  id       String  @id @default(cuid())
+  name     String
+  status   Status  @default(INIT)
+  agent    Agent?  @relation(fields: [agent_id], references: [id])
+  agent_id String?
+  task     Task    @relation(fields: [task_id], references: [id])
+  task_id  String
+
+  @@map("t_punk_app")
+}
+
+model Task {
+  id       String  @id @default(cuid())
+  name     String
+  status   Status  @default(INIT)
+  step     String
+  progress Int
+  app      App[]
+  agent    Agent[]
+  log      Log[]
+
+  @@map("t_punk_task")
+}
+
+model Log {
+  id        String    @id @default(cuid())
+  message   String
+  create_at DateTime? @default(now())
+  task      Task?     @relation(fields: [task_id], references: [id])
+  task_id   String?   @map("task_id")
+
+  @@map("t_punk_log")
+}
+
+model User {
+  id       String @id @default(cuid())
+  username String @unique
+  password String
+
+  @@map("t_cyber_user")
+}
