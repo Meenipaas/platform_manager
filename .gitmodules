@@ -1,0 +1,3 @@
+[submodule "pm_portal"]
+	path = pm_portal
+	url = git@github.com:Meenipaas/platform_manager_port.git
