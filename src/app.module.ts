@@ -2,7 +2,6 @@ import { CacheModule, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ScheduleModule } from '@nestjs/schedule';
-import { AgentModule } from './modules/agent';
 import { SshModule } from './modules/ssh';
 import { CONFIG, ConfigModule } from '@ddboot/config';
 import { LoggerModule } from '@ddboot/log4js';
@@ -26,7 +25,6 @@ import { AuthGuard } from './guard/auth.guard';
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
-    AgentModule,
   ],
   controllers: [AppController],
   providers: [

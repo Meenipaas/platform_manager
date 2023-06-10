@@ -28,16 +28,16 @@ export class UserService {
     return this.userDao.getUserByName$(username).pipe(
       concatMap((user) => {
         if (!user) {
-          this.logger.info('user is not founded');
+          this.logger.error('user is not founded');
           throw new BaseException('U10000', HttpStatus.UNAUTHORIZED);
         }
         return from(comparePbkdf2(password, this.pbkKey, user.password)).pipe(
           map((compareResult) => {
             if (!compareResult) {
-              this.logger.info('password is incorrect');
+              this.logger.error('password is wrong');
               throw new BaseException('U10001', HttpStatus.UNAUTHORIZED);
             }
-            this.logger.info('this.logger.info>>>>>>>>>.');
+            this.logger.info('sign to access token');
             return this.jwtService.sign(
               {
                 username: username,
@@ -49,7 +49,7 @@ export class UserService {
             );
           }),
           map((accessToken) => {
-            this.logger.info('get access token successfully');
+            this.logger.info('end to sign in');
             return {
               access_token: accessToken,
             };

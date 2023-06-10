@@ -7,4 +7,5 @@ export const ErrorCode = {
   T10000: 'validation error',
   U10002: 'token is invalid',
   U10003: 'token is expired',
+  U10004: 'ssh is not connected',
 };

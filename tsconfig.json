@@ -34,5 +34,8 @@
         "libs/core/src/*"
       ]
     }
-  }
+  },
+  "exclude": [
+    "pm_portal/**/*"
+  ],
 }
