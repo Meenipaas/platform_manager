@@ -13,7 +13,6 @@ import { CONFIG, ConfigService } from '@ddboot/config';
         const secret = configService.get<string>('jwt.key');
         return {
           secret,
-          global: true,
         };
       },
       inject: [CONFIG],

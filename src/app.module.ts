@@ -4,11 +4,13 @@ import { AppService } from './app.service';
 import { ScheduleModule } from '@nestjs/schedule';
 import { SshModule } from './modules/ssh';
 import { CONFIG, ConfigModule } from '@ddboot/config';
-import { LoggerModule } from '@ddboot/log4js';
+import { ConfigService, LoggerModule } from '@ddboot/log4js';
 import { PrismaModule } from '@ddboot/prisma';
 import { UserModule } from '~/modules/user/user.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guard/auth.guard';
+import { VirtualMachineModule } from './modules/virtualMachine/virtual-machine.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -25,6 +27,7 @@ import { AuthGuard } from './guard/auth.guard';
       isGlobal: true,
     }),
     ScheduleModule.forRoot(),
+    VirtualMachineModule,
   ],
   controllers: [AppController],
   providers: [

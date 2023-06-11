@@ -1,7 +1,7 @@
 import { Log4j, Logger } from '@ddboot/log4js';
 import { Injectable } from '@nestjs/common';
 import { exec } from 'child_process';
-import util from 'util';
+import * as util from 'util';
 const execPromise = util.promisify(exec);
 
 @Injectable()
