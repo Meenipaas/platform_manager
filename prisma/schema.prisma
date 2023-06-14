@@ -34,7 +34,7 @@ enum Status {
 model VirtualMachine {
   id                String             @id @default(cuid())
   hostname          String             @default("")
-  ip                String             @default("")
+  ip                String             @unique() @default("")
   rootPassword      String             @default("") @map("root_password")
   totalMemory       Int                @default(0) @map("total_memory")
   created_at        DateTime           @default(now())
@@ -42,7 +42,7 @@ model VirtualMachine {
   virtalMacineDisks VirtalMacineDisk[]
   metrics           Metrics[]
   agent             Agent?             @relation(fields: [agentId], references: [id])
-  agentId           String             @map("agent_id")
+  agentId           String?            @map("agent_id")
 
   @@map("t_cyber_vm")
 }

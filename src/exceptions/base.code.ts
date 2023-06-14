@@ -8,4 +8,5 @@ export const ErrorCode = {
   U10002: 'token is invalid',
   U10003: 'token is expired',
   U10004: 'ssh is not connected',
+  U10005: 'ip is not valid',
 };

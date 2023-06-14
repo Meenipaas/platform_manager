@@ -7,7 +7,7 @@ import { InjectSSH } from '../ssh';
 import { NodeSSH } from 'node-ssh';
 import { HelperService } from '~/common/helper.service';
 import { BaseException } from '~/exceptions';
-import { encrypt } from '@ddboot/core';
+import { decrypt, encrypt } from '@ddboot/core';
 import { Value } from '@ddboot/config';
 import { QueryParam } from '~/models/queryParam.dto';
 
@@ -27,8 +27,8 @@ export class VirtualMachineService {
 
   addVirtualMachine(vm: VirtualDto) {
     this.log.info('begin to add virtual machine');
-    const encryPass = encrypt(this.passSaltKey, vm.rootPassword);
-    vm.rootPassword = encryPass;
+    const encryptPass = encrypt(this.passSaltKey, vm.rootPassword);
+    vm.rootPassword = encryptPass;
     return from(this.virtualMachineDao.addVirtualMachine(vm)).pipe(
       map(() => {
         return {
@@ -42,33 +42,49 @@ export class VirtualMachineService {
    * @param vm
    * @returns
    */
-  testVmConnect(vm: VirtualDto) {
-    this.log.info('begin to test Vm Connected');
-    this.log.debug('testAgentConnected vm info  =', vm);
-    this.log.info('begin test ip ping, the ip is ', vm.ip);
-    return from(
-      this.helperService.executeCommand('ping', vm.ip, '-c', '4'),
-    ).pipe(
-      catchError((error) => {
-        this.log.error('ping ip error = ', error);
-        throw error;
-      }),
-      concatMap(() => {
+  testVmConnect(vmIP: string) {
+    this.log.info('begin to test Vm Connected ,the vm ip is ', vmIP);
+    if (!vmIP) {
+      this.log.error('vm ip is null');
+      throw new BaseException('U10005');
+    }
+    return from(this.virtualMachineDao.getVMByIP(vmIP)).pipe(
+      concatMap((vmInfo) => {
+        if (!vmInfo) {
+          this.log.error('vm not exist');
+          throw new Error('vm not exist');
+        }
         return from(
-          this.ssh.connect({
-            host: vm.ip,
-            username: 'root',
-            password: vm.rootPassword,
-          }),
+          this.helperService.executeCommand('ping', vmInfo.ip, '-t', '2'),
         ).pipe(
           catchError((error) => {
-            this.log.error('ssh connect error = ', error);
+            this.log.error('ping ip error = ', error);
             throw error;
           }),
+          concatMap(() => {
+            const decryPass = decrypt(this.passSaltKey, vmInfo.rootPassword);
+            return from(
+              this.ssh.connect({
+                host: vmInfo.ip,
+                username: 'root',
+                password: decryPass,
+              }),
+            ).pipe(
+              catchError((error) => {
+                this.log.error('ssh connect error = ', error);
+                throw error;
+              }),
+              map(() => {
+                return {
+                  done: true,
+                };
+              }),
+            );
+          }),
+          catchError(() => {
+            throw new BaseException('U10004');
+          }),
         );
-      }),
-      catchError(() => {
-        throw new BaseException('U10004');
       }),
     );
   }

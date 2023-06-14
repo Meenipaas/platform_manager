@@ -9,7 +9,13 @@ export class VirtualMachineDao {
     private readonly prismaService: PrismaService,
     private readonly prismaHelper: PrismaHelper,
   ) {}
-
+  getVMByIP(vmIP: string) {
+    return this.prismaService.virtualMachine.findUnique({
+      where: {
+        ip: vmIP,
+      },
+    });
+  }
   addVirtualMachine(vm: VirtualDto) {
     return this.prismaService.virtualMachine.create({
       data: {

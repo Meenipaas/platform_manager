@@ -17,7 +17,7 @@ export class HelperService {
     }
     const controller = new AbortController();
     const { signal } = controller;
-    const { stdout, stderr } = await execPromise(cmd.toString(), { signal });
+    const { stdout, stderr } = await execPromise(cmd.join(' '), { signal });
     if (stderr) {
       this.log.error('execute command error = ', stderr);
       controller.abort();

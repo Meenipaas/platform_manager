@@ -27,8 +27,8 @@ export class VirtualMachineController {
   @Post('connect')
   @UseGuards(AuthGuard)
   @Message('test vm connect success')
-  testVmConnect(@Body() vm: VirtualDto) {
-    return this.virtualMachineService.testVmConnect(vm);
+  testVmConnect(@Query('ip') vmIP: string) {
+    return this.virtualMachineService.testVmConnect(vmIP);
   }
 
   @Get()
