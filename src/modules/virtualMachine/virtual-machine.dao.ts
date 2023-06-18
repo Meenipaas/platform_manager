@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DeleteVirtualDto, VirtualDto } from './virtual.dto';
+import { UpdateBasicVirtualDto, VirtualDto } from './virtual.dto';
 import { PaginationParam, PrismaHelper, PrismaService } from '@ddboot/prisma';
 import { VirtualMachine } from '@prisma/client';
 
@@ -9,6 +9,7 @@ export class VirtualMachineDao {
     private readonly prismaService: PrismaService,
     private readonly prismaHelper: PrismaHelper,
   ) {}
+
   getVMByIP(vmIP: string) {
     return this.prismaService.virtualMachine.findUnique({
       where: {
@@ -25,6 +26,40 @@ export class VirtualMachineDao {
     });
   }
 
+  getVMInfoById(vmId: string) {
+    return this.prismaService.virtualMachine.findUnique({
+      select: {
+        id: true,
+        hostname: true,
+        ip: true,
+        created_at: true,
+        updated_at: true,
+        virtualMachineDisks: {
+          select: {
+            id: true,
+            fileSystem: true,
+            size: true,
+            mountedOn: true,
+            used: true,
+            avail: true,
+          },
+        },
+        metrics: {
+          select: {
+            id: true,
+            time: true,
+            metricsCPU: true,
+            metricsBandwidth: true,
+            MetricsMemory: true,
+          },
+        },
+      },
+      where: {
+        id: vmId,
+      },
+    });
+  }
+
   listVirtual(pagination: PaginationParam, keyWord?: string) {
     const containName = this.prismaHelper.likeQuery<VirtualMachine>(
       keyWord,
@@ -33,6 +68,14 @@ export class VirtualMachineDao {
     const pageParams = this.prismaHelper.paginationParams(pagination);
     const data = this.prismaService.virtualMachine.findMany({
       ...pageParams,
+      select: {
+        id: true,
+        hostname: true,
+        ip: true,
+        created_at: true,
+        updated_at: true,
+        agentId: true,
+      },
       where: {
         ...containName,
       },
@@ -45,11 +88,23 @@ export class VirtualMachineDao {
     return this.prismaService.$transaction([data, count]);
   }
 
-  deleteVM(vms: DeleteVirtualDto[]): any {
+  updateVirtualMachineBasicInfo(vm: UpdateBasicVirtualDto) {
+    return this.prismaService.virtualMachine.update({
+      where: {
+        id: vm.id,
+      },
+      data: {
+        ip: vm.ip,
+        rootPassword: vm.rootPassword,
+      },
+    });
+  }
+
+  deleteVM(vmIds: string[]): any {
     return this.prismaService.virtualMachine.deleteMany({
       where: {
         id: {
-          in: vms.map((item) => item.id),
+          in: vmIds,
         },
       },
     });

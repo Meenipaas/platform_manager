@@ -30,28 +30,42 @@ enum Status {
   CLEANING
 }
 
+enum AgentStatus {
+  INIT
+  RUNNING
+  STOPPED
+  FAILED
+  WAITING_PUSH
+  PUSH_AGENT
+  PUSH_AGENT_DONE
+  DOWNLOAD_AGENT
+  DOWNLOAD_FAILED
+  INSTALL
+  UPDATING
+}
+
 // 虚拟机
 model VirtualMachine {
-  id                String             @id @default(cuid())
-  hostname          String             @default("")
-  ip                String             @unique() @default("")
-  rootPassword      String             @default("") @map("root_password")
-  totalMemory       Int                @default(0) @map("total_memory")
-  created_at        DateTime           @default(now())
-  updated_at        DateTime           @default(now())
-  virtalMacineDisks VirtalMacineDisk[]
-  metrics           Metrics[]
-  agent             Agent?             @relation(fields: [agentId], references: [id])
-  agentId           String?            @map("agent_id")
+  id                  String               @id @default(cuid())
+  hostname            String               @default("")
+  ip                  String               @unique() @default("")
+  rootPassword        String               @default("") @map("root_password")
+  totalMemory         Int                  @default(0) @map("total_memory")
+  created_at          DateTime             @default(now())
+  updated_at          DateTime             @default(now())
+  virtualMachineDisks VirtualMachineDisk[]
+  metrics             Metrics[]
+  agent               Agent?               @relation(fields: [agentId], references: [id])
+  agentId             String?              @map("agent_id")
 
   @@map("t_cyber_vm")
 }
 
-model VirtalMacineDisk {
+model VirtualMachineDisk {
   id               String          @id @default(cuid())
   fileSystem       String          @map("file_system")
   size             Int             @default(0)
-  mouted_on        String          @default("") @map("mouted_on")
+  mountedOn        String          @default("") @map("mounted_on")
   used             Int             @default(0)
   avail            Int             @default(0)
   created_at       DateTime        @default(now())

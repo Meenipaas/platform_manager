@@ -5,10 +5,15 @@ import {
   Delete,
   Get,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { DeleteVirtualDto, VirtualDto } from './virtual.dto';
+import {
+  DeleteVirtualDto,
+  UpdateBasicVirtualDto,
+  VirtualDto,
+} from './virtual.dto';
 import { Message, Pagination } from '@ddboot/core';
 import { QueryParam } from '~/models/queryParam.dto';
 import { AuthGuard } from '~/guard/auth.guard';
@@ -24,7 +29,14 @@ export class VirtualMachineController {
     return this.virtualMachineService.addVirtualMachine(vm);
   }
 
-  @Post('connect')
+  @Put('basic_info')
+  @UseGuards(AuthGuard)
+  @Message('update virtual machine basic info success')
+  updateVirtualMachineBasicInfo(@Body() vm: UpdateBasicVirtualDto) {
+    return this.virtualMachineService.updateVirtualMachineBasicInfo(vm);
+  }
+
+  @Get('connect')
   @UseGuards(AuthGuard)
   @Message('test vm connect success')
   testVmConnect(@Query('ip') vmIP: string) {
@@ -49,7 +61,7 @@ export class VirtualMachineController {
 
   @Delete()
   @Message('delete vm success')
-  deleteVM(@Body() vms: DeleteVirtualDto[]) {
-    return this.virtualMachineService.deleteVM(vms);
+  deleteVM(@Body() vms: DeleteVirtualDto) {
+    return this.virtualMachineService.deleteVM(vms.ids);
   }
 }

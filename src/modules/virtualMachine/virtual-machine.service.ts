@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { DeleteVirtualDto, VirtualDto } from './virtual.dto';
+import {
+  DeleteVirtualDto,
+  UpdateBasicVirtualDto,
+  VirtualDto,
+} from './virtual.dto';
 import { VirtualMachineDao } from './virtual-machine.dao';
 import { Log4j, Logger } from '@ddboot/log4js';
 import { catchError, concatMap, from, map } from 'rxjs';
@@ -31,12 +35,30 @@ export class VirtualMachineService {
     vm.rootPassword = encryptPass;
     return from(this.virtualMachineDao.addVirtualMachine(vm)).pipe(
       map(() => {
+        this.log.info('end to add virtual machine');
         return {
           done: true,
         };
       }),
     );
   }
+
+  updateVirtualMachineBasicInfo(vm: UpdateBasicVirtualDto) {
+    this.log.info('begin to add virtual machine');
+    if (vm.rootPassword) {
+      const encryptPass = encrypt(this.passSaltKey, vm.rootPassword);
+      vm.rootPassword = encryptPass;
+    }
+    return from(this.virtualMachineDao.updateVirtualMachineBasicInfo(vm)).pipe(
+      map(() => {
+        this.log.info('end to add virtual machine');
+        return {
+          done: true,
+        };
+      }),
+    );
+  }
+
   /**
    * 测试虚拟机
    * @param vm
@@ -91,11 +113,22 @@ export class VirtualMachineService {
 
   listVirtualMachine(queryParam: QueryParam, keyWord: string, id?: string) {
     this.log.info('begin to list virtual machine');
-    this.log.debug('listVirtualMachine query params  =  ', queryParam);
-    this.log.debug('listVirtualMachine keyWord  =  ', keyWord);
-    this.log.debug('listVirtualMachine id  =  ', id);
+    this.log.debug(
+      '[listVirtualMachine]  queryParam = ',
+      queryParam,
+      'keyWord = ',
+      keyWord,
+      'id = ',
+      id,
+    );
     if (id) {
-      return null;
+      return from(this.virtualMachineDao.getVMInfoById(id)).pipe(
+        map((item) => {
+          return {
+            data: item,
+          };
+        }),
+      );
     }
     return from(this.virtualMachineDao.listVirtual(queryParam, keyWord)).pipe(
       map(([data, count]) => {
@@ -109,8 +142,8 @@ export class VirtualMachineService {
     );
   }
 
-  deleteVM(vms: DeleteVirtualDto[]) {
+  deleteVM(vmsIds: string[]) {
     this.log.info('begin to delete vm');
-    return from(this.virtualMachineDao.deleteVM(vms)).pipe(map(() => ({})));
+    return from(this.virtualMachineDao.deleteVM(vmsIds)).pipe(map(() => ({})));
   }
 }

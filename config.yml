@@ -23,7 +23,7 @@ database:
   database: at_platform
 crypto:
   pbk: '222'
-  saltKey: ssss
+  saltKey: qzBra0aKNgqxL6mmCtH7IxJXd9IYjhnb
 jwt:
   key: qzBra0aKNgqxL6mmCtH7IxJXd9I/diT7+OEgh9eziYk=
   expired: 3600

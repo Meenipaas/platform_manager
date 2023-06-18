@@ -1,9 +1,9 @@
 import * as Crypto from 'crypto';
 
 const algorithm = 'aes-256-cbc';
-const iv = Crypto.randomBytes(16);
 
 export function encrypt(salt: string, text: string) {
+  const iv = Crypto.randomBytes(16);
   // Creating Cipheriv with its parameter
   const cipher = Crypto.createCipheriv(algorithm, Buffer.from(salt), iv);
 
