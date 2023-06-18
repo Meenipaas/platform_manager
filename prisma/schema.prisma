@@ -121,11 +121,11 @@ model MetricsBandwidth {
 model Agent {
   id             String           @id @default(cuid())
   manageIp       String           @unique @map("manage_ip")
-  status         Status
+  status         AgentStatus
   homePath       String           @map("home_path")
   clientId       String           @map("client_id")
   clientSecret   String           @map("client_secret")
-  platformIp     String           @map("platform_ip")
+  platformIP     String           @map("platform_ip")
   created_at     DateTime         @default(now())
   updated_at     DateTime         @default(now())
   task           Task?            @relation(fields: [task_id], references: [id])
